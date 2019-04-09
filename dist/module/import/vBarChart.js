@@ -90,9 +90,10 @@ var vBarChart = function chart() {
    * @member mouseOver
    * @function
    * @param {Object} d (svg element)
+   * @param {Object} i (index of svg element)
    */
-  var mouseOver = function mouseOver(d) {
-    _this.addTooltip(d, window.event);
+  var mouseOver = function mouseOver(d, i) {
+    _this.addTooltip(d, window.event || { offsetX: getXCoord(d, i), offsetY: getYCoord(d, i) });
   };
 
   /**
@@ -106,6 +107,16 @@ var vBarChart = function chart() {
   };
 
   /**
+   * emits "chart-click" vue event
+   * @member mouseClick
+   * @function
+   * @param {Object} d (svg element)
+   */
+  var mouseClick = function mouseClick(d) {
+    _this.$emit('chart-click', d);
+  };
+
+  /**
    * Runs when a new element is added to the dataset
    * @member enter
    * @function
@@ -114,7 +125,7 @@ var vBarChart = function chart() {
   var enter = function enter(rects) {
     _this.metric.forEach(function (e, i) {
       cs.bar.offset = i;
-      rects[i].enter().append('rect').attr('fill', cs.palette.fill[i]).attr('stroke', cs.palette.stroke).attr('class', _this.selector).attr('class', 'r' + i).attr('width', getWidth).attr('height', getHeight).attr('x', getXCoord).attr('y', getYCoord).on('mouseover', mouseOver).on('mouseout', mouseOut);
+      rects[i].enter().append('rect').attr('fill', cs.palette.fill[i]).attr('stroke', cs.palette.stroke).attr('class', _this.selector).attr('class', 'r' + i).attr('width', getWidth).attr('height', getHeight).attr('x', getXCoord).attr('y', getYCoord).on('mouseover', mouseOver).on('mouseout', mouseOut).on('click', mouseClick);
     });
   };
   /**

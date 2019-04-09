@@ -12,13 +12,14 @@ import _Object$assign from 'babel-runtime/core-js/object/assign';
  */
 
 /* eslint-env browser */
-import barChart from './import/barChart';
-import vBarChart from './import/vBarChart';
-import lineGraph from './import/lineGraph';
-import scatterPlot from './import/scatterPlot';
-import pieChart from './import/pieChart';
-import areaChart from './import/areaChart';
-import bubbleChart from './import/bubbleChart';
+// import barChart from './import/barChart';
+// import vBarChart from './import/vBarChart';
+// import lineGraph from './import/lineGraph';
+// import scatterPlot from './import/scatterPlot';
+// import pieChart from './import/pieChart';
+// import areaChart from './import/areaChart';
+// import bubbleChart from './import/bubbleChart';
+import paintingPlot from './import/paintingPlot';
 
 var d3 = _Object$assign({}, require('d3-selection'));
 
@@ -227,7 +228,7 @@ var Chart = {
           });
           return metric;
         }
-      }, typeof barChart !== 'undefined' && { barChart: barChart }, typeof vBarChart !== 'undefined' && { vBarChart: vBarChart }, typeof scatterPlot !== 'undefined' && { scatterPlot: scatterPlot }, typeof pieChart !== 'undefined' && { pieChart: pieChart }, typeof areaChart !== 'undefined' && { areaChart: areaChart }, typeof lineGraph !== 'undefined' && { lineGraph: lineGraph }, typeof bubbleChart !== 'undefined' && { bubbleChart: bubbleChart }),
+      }, typeof barChart !== 'undefined' && { barChart: barChart }, typeof vBarChart !== 'undefined' && { vBarChart: vBarChart }, typeof scatterPlot !== 'undefined' && { scatterPlot: scatterPlot }, typeof pieChart !== 'undefined' && { pieChart: pieChart }, typeof areaChart !== 'undefined' && { areaChart: areaChart }, typeof lineGraph !== 'undefined' && { lineGraph: lineGraph }, typeof bubbleChart !== 'undefined' && { bubbleChart: bubbleChart }, typeof paintingPlot !== 'undefined' && { paintingPlot: paintingPlot }),
       computed: {
         /**
          * Dataset getter function

@@ -33,8 +33,8 @@ const scatterPlot = function chart() {
       pointStroke: '#d1f4fa',
     },
     x: {
-      domain: [],
-      range: [],
+      domain: [0, 1000],
+      range: [0, 1000],
       axisHeight: 20,
       label: this.metric[0],
     },
@@ -44,7 +44,7 @@ const scatterPlot = function chart() {
       label: this.metric[1],
     },
     r: {
-      width: 5
+      width: 1
     }
   };
 
@@ -81,6 +81,7 @@ const scatterPlot = function chart() {
    * @param {Object} points (svg element) 
    */
   const transition = (points) => {
+    console.log(points)
     points.transition()
       .attr('r', cs.r.width)
       .attr('cx', d => cs.x.scale(d.metric[0]) + cs.y.axisWidth + 5)
@@ -130,10 +131,9 @@ const scatterPlot = function chart() {
     svgContainer.append('g').attr('class', 'axis').attr('transform', `translate(${cs.y.xOffset},${cs.y.yOffset})`)
       .call(cs.y.axis);
   };
-  
-  const points = svgContainer.selectAll('circle').data(this.ds);
-  let painting = false;
+
   const _this = this;
+  let painting = false;
   svgContainer.on('mousedown', function(e){
     painting = true;
   })
@@ -145,9 +145,11 @@ const scatterPlot = function chart() {
     {
       let x = cs.x.scale.invert(d3.mouse(this)[0]) - 17
       let y = cs.y.scale.invert(d3.mouse(this)[1])
-      _this.$emit('painting', _this, [cs, { x, y }]);
+      _this.$emit('painting', cs, { x, y });
     }
   })
+  
+  const points = svgContainer.selectAll('circle').data(this.ds);
 
   cs = this.setOverrides(cs, this.chartData.overrides);
   buildScales(cs);

@@ -7,13 +7,14 @@
  */
 
 /* eslint-env browser */
-import barChart from './import/barChart';
-import vBarChart from './import/vBarChart';
-import lineGraph from './import/lineGraph';
-import scatterPlot from './import/scatterPlot';
-import pieChart from './import/pieChart';
-import areaChart from './import/areaChart';
-import bubbleChart from './import/bubbleChart';
+// import barChart from './import/barChart';
+// import vBarChart from './import/vBarChart';
+// import lineGraph from './import/lineGraph';
+// import scatterPlot from './import/scatterPlot';
+// import pieChart from './import/pieChart';
+// import areaChart from './import/areaChart';
+// import bubbleChart from './import/bubbleChart';
+import paintingPlot from './import/paintingPlot';
 
 const d3 = Object.assign({},
   require('d3-selection'));
@@ -261,6 +262,8 @@ const Chart = {
         ...((typeof areaChart !== 'undefined') && { areaChart }),
         ...((typeof lineGraph !== 'undefined') && { lineGraph }),
         ...((typeof bubbleChart !== 'undefined') && { bubbleChart }),
+        ...((typeof paintingPlot !== 'undefined') && { paintingPlot })
+        
       },
       computed: {
         /**

@@ -16,25 +16,7 @@
       </div>
       <div class="col-6 col-md-8">
         <div class="row">
-          <div class="col-12">
-            <v-chart v-bind:chartData="lineGraphData"></v-chart>
-          </div>
-          <div class="col-12">
-            <v-chart v-bind:chartData="areaChartData"></v-chart>
-          </div>
-          <div class="col-12">
-            <v-chart v-bind:chartData="bubbleChartData"></v-chart>
-          </div>
-          <div class="col-12">
-            <v-chart v-bind:chartData="vBarChartData"></v-chart>
-          </div>
-          <div class="col-12">
-            <v-chart v-bind:chartData="barChartData"></v-chart>
-          </div>
-          <div class="col-12">
-            <v-chart v-bind:chartData="pieChartData"></v-chart>
-          </div>
-          <div class="col-12">
+          <div class="col-12" id="drawingboard">
             <v-chart v-bind:chartData="scatterPlotData"></v-chart>
           </div>
         </div>  
@@ -46,9 +28,17 @@
 
 <script>
 import sales from "../assets/data/sales";
+import * as d3 from 'd3'
 
 export default {
   name: "barChartExample",
+  mounted(){
+    const el = d3.select('#drawingboard svg')
+    console.log('jej', el)
+		el.on('painting', (attr1, attr2, attr3) => {
+      console.log(attr1, attr2, attr3)
+    })
+  },
   methods: {
     newItem: function() {
       this.sales.push({
@@ -66,101 +56,8 @@ export default {
   data() {
     return {
       sales: sales,
-      areaChartData: {
-        chartType: "areaChart",
-        selector: "areaChart",
-        title: "Area Chart",
-        width: 600,
-        height: 500,
-        metric: ["total"],
-        dim: "month",
-        data: sales,
-        legends: {
-          enabled: true,
-          height: 25,
-          width: 50
-        }
-      },
-      bubbleChartData: {
-        chartType: "bubbleChart",
-        selector: "bubbleChart",
-        title: "Bubble Chart",
-        subtitle: "Sales by month",
-        width: 600,
-        height: 500,
-        dim: "month",
-        grid: {
-          enabled: true, 
-        },
-        metric: ['total', 'forecast', 'yoy'],
-        data: sales,
-        goal: 500,
-      },
-      lineGraphData: {
-        chartType: "lineGraph",
-        selector: "lineGraph",
-        title: "Line Graph",
-        subtitle: "Sales by month",
-        width: 600,
-        height: 500,
-        goal: 600,
-        metric: ["total", "forecast"],
-        dim: "month",
-        data: sales,
-        label: true,
-        legends: {
-          enabled: true,
-          height: 25,
-          width: 50
-        },
-        overrides: {
-          palette: {
-            fill: ["#34495E", "#4fc08d"],
-            stroke: "#41B883"
-          }
-        }
-      },
-      vBarChartData: {
-        chartType: "vBarChart",
-        selector: "vChart",
-        title: "Bar Chart",
-        subtitle: "Sales by month",
-        width: 600,
-        height: 500,
-        metric: ["total", "forecast"],
-        dim: "month",
-        data: sales,
-        legends: {
-          enabled: true,
-          height: 25,
-          width: 50
-        },
-      },
-      barChartData: {
-        chartType: "barChart",
-        selector: "barChart",
-        title: "Bar Chart",
-        subtitle: "Sales by month",
-        width: 600,
-        height: 500,
-        metric: ["total", "forecast"],
-        dim: "month",
-        data: sales,
-        label: true
-      },
-      pieChartData: {
-        chartType: "pieChart",
-        selector: "pieChart",
-        title: "Pie Chart",
-        subtitle: "Sales by month",
-        width: 600,
-        height: 500,
-        metric: "total",
-        dim: "month",
-        data: sales
-      },
       scatterPlotData: {
-        chartType: "scatterPlot",
+        chartType: "paintingPlot",
         selector: "scatterPlot",
         title: "Scatter Plot",
         subtitle: "Sales by month",

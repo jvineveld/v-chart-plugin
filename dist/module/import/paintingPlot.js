@@ -1,20 +1,22 @@
 import _Object$assign from 'babel-runtime/core-js/object/assign';
 /** 
- *  @fileOverview Bubble Chart component definition
+ *  @fileOverview Scatter Plot component definition
  *
  *  @author       Brian Greig
  *
  *  @requires     NPM:d3:Vue
  *  @requires     src/v-chart-plugin.js
  */
-var d3 = _Object$assign({}, require('d3-selection'), require('d3-scale'), require('d3-axis'), require('d3-shape'));
+
+/* eslint-env browser */
+var d3 = _Object$assign({}, require('d3-selection'), require('d3-scale'), require('d3-axis'));
 /**
- * Builds a Bubble Chart.
- * @module bubbleChart
+ * Builds a Scatter Plot.
+ * @module scatterPlot
  */
 
-var bubbleChart = function chart(mode) {
-  var _this = this;
+var scatterPlot = function chart() {
+  var _this2 = this;
 
   /**
    * The SVG that stores the chart
@@ -27,20 +29,22 @@ var bubbleChart = function chart(mode) {
    */
   var cs = {
     palette: {
-      fill: '#005792',
-      stroke: '#d1f4fa'
+      pointFill: '#005792',
+      pointStroke: '#d1f4fa'
     },
     x: {
-      domain: [],
-      range: [],
-      axisHeight: 20
+      domain: [0, 1000],
+      range: [0, 1000],
+      axisHeight: 20,
+      label: this.metric[0]
     },
     y: {
       axisWidth: 30,
-      ticks: 5
+      ticks: 5,
+      label: this.metric[1]
     },
     r: {
-      max: 20
+      width: 1
     }
   };
 
@@ -51,14 +55,12 @@ var bubbleChart = function chart(mode) {
    * @param {Object} points (svg element) 
    */
   var enter = function enter(points) {
-    points.enter().append('circle').attr('class', _this.selector).attr('fill', cs.palette.fill).attr('stroke', cs.palette.stroke).on('mouseover', function (d) {
-      _this.addTooltip(d, window.event);
+    points.enter().append('circle').attr('class', _this2.selector).attr('fill', cs.palette.fill).attr('stroke', cs.palette.stroke).attr('r', cs.r.width).on('mouseover', function (d) {
+      _this2.addTooltip(d, window.event);
     }).on('mouseout', function (d) {
-      _this.removeTooltip(d);
+      _this2.removeTooltip(d);
     }).on('click', function (d) {
-      _this.$emit('chart-click', d);
-    }).attr('r', function (d) {
-      return cs.r.scale(d.metric[2]);
+      _this2.$emit('chart-click', d);
     }).attr('cx', function (d) {
       return cs.x.scale(d.metric[0]) + cs.y.axisWidth + 5;
     }).attr('cy', function (d) {
@@ -73,9 +75,8 @@ var bubbleChart = function chart(mode) {
    * @param {Object} points (svg element) 
    */
   var transition = function transition(points) {
-    points.transition().attr('r', function (d) {
-      return cs.r.scale(d.metric[2]);
-    }).attr('cx', function (d) {
+    console.log(points);
+    points.transition().attr('r', cs.r.width).attr('cx', function (d) {
       return cs.x.scale(d.metric[0]) + cs.y.axisWidth + 5;
     }).attr('cy', function (d) {
       return cs.y.scale(d.metric[1]);
@@ -100,9 +101,8 @@ var bubbleChart = function chart(mode) {
    * @function
    */
   var buildScales = function buildScales(cs) {
-    cs.y.scale = d3.scaleLinear().domain([_this.minTriplet.v2 - cs.r.max, _this.maxTriplet.v2 + cs.r.max]).range([_this.displayHeight - cs.x.axisHeight, _this.header]);
-    cs.x.scale = d3.scaleLinear().domain([_this.minTriplet.v1 - cs.r.max, _this.maxTriplet.v1 + cs.r.max]).range([0, _this.width]);
-    cs.r.scale = d3.scaleLinear().domain([_this.minTriplet.v3, _this.maxTriplet.v3]).range([0, cs.r.max]);
+    cs.y.scale = d3.scaleLinear().domain([_this2.minTriplet.v2 - _this2.maxTriplet.v2 * .05, _this2.maxTriplet.v2 + _this2.maxTriplet.v2 * .05]).range([_this2.displayHeight - cs.x.axisHeight, _this2.header]);
+    cs.x.scale = d3.scaleLinear().domain([_this2.minTriplet.v1 - _this2.maxTriplet.v2 * .05, _this2.maxTriplet.v1 + _this2.maxTriplet.v1 * .05]).range([0, _this2.width]);
   };
   /**
    * Draws the x and y axes on the svg
@@ -110,10 +110,10 @@ var bubbleChart = function chart(mode) {
    * @function
    */
   var drawAxis = function drawAxis(cs) {
-    _this.drawGrid(cs);
+    _this2.drawGrid(cs);
     cs.x.axis = d3.axisBottom().scale(cs.x.scale);
     cs.x.xOffset = cs.y.axisWidth + 5;
-    cs.x.yOffset = _this.displayHeight - cs.x.axisHeight;
+    cs.x.yOffset = _this2.displayHeight - cs.x.axisHeight;
     cs.y.axis = d3.axisLeft().ticks(cs.y.ticks, 's').scale(cs.y.scale);
     cs.y.xOffset = cs.y.axisWidth;
     cs.y.yOffset = 0;
@@ -121,10 +121,23 @@ var bubbleChart = function chart(mode) {
     svgContainer.append('g').attr('class', 'axis').attr('transform', 'translate(' + cs.y.xOffset + ',' + cs.y.yOffset + ')').call(cs.y.axis);
   };
 
+  var _this = this;
+  var painting = false;
+  svgContainer.on('mousedown', function (e) {
+    painting = true;
+  }).on('mouseup', function (e) {
+    painting = false;
+  }).on('mousemove', function (e) {
+    if (painting) {
+      var x = cs.x.scale.invert(d3.mouse(this)[0]) - 17;
+      var y = cs.y.scale.invert(d3.mouse(this)[1]);
+      _this.$emit('painting', cs, { x: x, y: y });
+    }
+  });
+
   var points = svgContainer.selectAll('circle').data(this.ds);
 
   cs = this.setOverrides(cs, this.chartData.overrides);
-
   buildScales(cs);
   drawAxis(cs);
   enter(points);
@@ -134,4 +147,4 @@ var bubbleChart = function chart(mode) {
   return cs;
 };
 
-export default bubbleChart;
+export default scatterPlot;
